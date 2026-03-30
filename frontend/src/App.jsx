@@ -11,6 +11,10 @@ import LeaderboardPage from './pages/LeaderboardPage';
 import ProfilePage from './pages/ProfilePage';
 import DailyChallengePage from './pages/DailyChallengePage';
 import PlaygroundPage from './pages/PlaygroundPage';
+import AchievementsPage from './pages/AchievementsPage';
+import SnippetsPage from './pages/SnippetsPage';
+import BattlesPage from './pages/BattlesPage';
+import AnalyticsPage from './pages/AnalyticsPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -69,9 +73,13 @@ function App() {
                   <Route path="/problems"    element={<ProblemsPage currentUser={currentUser} />} />
                   <Route path="/problem/:id" element={<WorkspacePage currentUser={currentUser} />} />
                   <Route path="/leaderboard" element={<LeaderboardPage currentUser={currentUser} />} />
-                  <Route path="/profile"     element={<ProfilePage currentUser={currentUser} />} />
-                  <Route path="/daily"       element={<DailyChallengePage currentUser={currentUser} />} />
-                  <Route path="/playground"  element={<PlaygroundPage />} />
+                  <Route path="/profile"       element={<ProfilePage currentUser={currentUser} />} />
+                  <Route path="/daily"         element={<DailyChallengePage currentUser={currentUser} />} />
+                  <Route path="/playground"    element={<PlaygroundPage />} />
+                  <Route path="/achievements"  element={<AchievementsPage currentUser={currentUser} />} />
+                  <Route path="/snippets"      element={<SnippetsPage currentUser={currentUser} />} />
+                  <Route path="/battles"       element={<BattlesPage currentUser={currentUser} />} />
+                  <Route path="/analytics"     element={<AnalyticsPage currentUser={currentUser} />} />
                 </Routes>
               </main>
             </div>

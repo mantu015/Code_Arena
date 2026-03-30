@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Code2, Trophy, List, User, LogOut, Sun, Moon, Flame } from 'lucide-react';
+import { Code2, Trophy, List, User, LogOut, Sun, Moon, Flame, Swords, BookOpen, TrendingUp, Award } from 'lucide-react';
 import AuthModal from './AuthModal';
 import { useTheme } from '../contexts/ThemeContext';
 
@@ -12,10 +12,14 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
   const [isLogoutOpen, setIsLogoutOpen] = useState(false);
 
   const navLinks = [
-    { name: 'Problems',    path: '/problems',   icon: <List size={17} /> },
-    { name: 'Playground',  path: '/playground', icon: <Code2 size={17} /> },
-    { name: 'Daily',       path: '/daily',      icon: <Flame size={17} /> },
-    { name: 'Leaderboard', path: '/leaderboard',icon: <Trophy size={17} /> },
+    { name: 'Problems',      path: '/problems',      icon: <List size={17} /> },
+    { name: 'Playground',    path: '/playground',    icon: <Code2 size={17} /> },
+    { name: 'Battles',       path: '/battles',       icon: <Swords size={17} /> },
+    { name: 'Snippets',      path: '/snippets',      icon: <BookOpen size={17} /> },
+    { name: 'Achievements',  path: '/achievements',  icon: <Award size={17} /> },
+    { name: 'Analytics',     path: '/analytics',     icon: <TrendingUp size={17} /> },
+    { name: 'Daily',         path: '/daily',         icon: <Flame size={17} /> },
+    { name: 'Leaderboard',   path: '/leaderboard',   icon: <Trophy size={17} /> },
   ];
 
   const openAuth = (mode) => { setAuthMode(mode); setIsAuthOpen(true); };

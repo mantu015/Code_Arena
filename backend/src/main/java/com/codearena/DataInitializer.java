@@ -2,6 +2,7 @@ package com.codearena;
 
 import com.codearena.model.Problem;
 import com.codearena.repository.ProblemRepository;
+import com.codearena.service.AchievementService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -11,12 +12,14 @@ import org.springframework.stereotype.Component;
 public class DataInitializer implements CommandLineRunner {
 
     private final ProblemRepository problemRepository;
+    private final AchievementService achievementService;
 
     @Override
     public void run(String... args) {
         if (problemRepository.count() == 0) {
             seed();
         }
+        achievementService.initializeAchievements();
     }
 
     private void seed() {
