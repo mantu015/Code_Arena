@@ -1,6 +1,5 @@
 # Backend build
 backend/target/
-backend/data/
 
 # Frontend build & deps
 frontend/node_modules/
