@@ -108,7 +108,7 @@ CREATE TABLE IF NOT EXISTS code_analytics (
     user_id BIGINT NOT NULL,
     submission_id BIGINT,
     date DATE NOT NULL,
-    hour INT,
+    hour_of_day INT,
     language VARCHAR(50),
     difficulty VARCHAR(50),
     time_taken_seconds INT,

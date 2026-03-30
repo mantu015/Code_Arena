@@ -20,7 +20,7 @@ public class AnalyticsService {
         analytics.setUserId(userId);
         analytics.setSubmissionId(submissionId);
         analytics.setDate(LocalDate.now());
-        analytics.setHour(java.time.LocalTime.now().getHour());
+        analytics.setHourOfDay(java.time.LocalTime.now().getHour());
         analytics.setLanguage(language);
         analytics.setDifficulty(difficulty);
         analytics.setTimeTakenSeconds(timeTaken);

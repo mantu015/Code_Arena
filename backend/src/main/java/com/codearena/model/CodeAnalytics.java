@@ -20,7 +20,7 @@ public class CodeAnalytics {
     private Long submissionId;
 
     private LocalDate date;
-    private Integer hour; // 0-23 for time-of-day analysis
+    private Integer hourOfDay; // 0-23 for time-of-day analysis
 
     private String language;
     private String difficulty;

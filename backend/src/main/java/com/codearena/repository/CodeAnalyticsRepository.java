@@ -15,6 +15,6 @@ public interface CodeAnalyticsRepository extends JpaRepository<CodeAnalytics, Lo
     @Query("SELECT a.language, COUNT(a) FROM CodeAnalytics a WHERE a.userId = ?1 GROUP BY a.language")
     List<Object[]> getLanguageStats(Long userId);
     
-    @Query("SELECT a.hour, AVG(a.complexityScore) FROM CodeAnalytics a WHERE a.userId = ?1 GROUP BY a.hour ORDER BY a.hour")
+    @Query("SELECT a.hourOfDay, AVG(a.complexityScore) FROM CodeAnalytics a WHERE a.userId = ?1 GROUP BY a.hourOfDay ORDER BY a.hourOfDay")
     List<Object[]> getHourlyPerformance(Long userId);
 }
