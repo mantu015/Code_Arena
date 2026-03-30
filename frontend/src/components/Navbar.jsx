@@ -13,6 +13,7 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
 
   const navLinks = [
     { name: 'Problems',    path: '/problems',   icon: <List size={17} /> },
+    { name: 'Playground',  path: '/playground', icon: <Code2 size={17} /> },
     { name: 'Daily',       path: '/daily',      icon: <Flame size={17} /> },
     { name: 'Leaderboard', path: '/leaderboard',icon: <Trophy size={17} /> },
   ];

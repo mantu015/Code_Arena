@@ -17,6 +17,7 @@ import java.time.LocalDate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/daily")
@@ -32,26 +33,21 @@ public class DailyChallengeController {
     @GetMapping
     public ResponseEntity<?> getToday() {
         LocalDate today = LocalDate.now();
-        Optional<DailyChallenge> opt = dailyChallengeRepository.findByChallengeDate(today);
+        DailyChallenge dc = dailyChallengeRepository.findByChallengeDate(today)
+            .orElseGet(() -> {
+                long count = problemRepository.count();
+                if (count == 0) return null;
+                long idx = (today.getDayOfYear() % count) + 1;
+                Problem p = problemRepository.findById(idx)
+                    .orElse(problemRepository.findAll().get(0));
+                DailyChallenge newDc = new DailyChallenge();
+                newDc.setChallengeDate(today);
+                newDc.setProblemId(p.getId());
+                newDc.setBonusPoints(50);
+                return dailyChallengeRepository.save(newDc);
+            });
 
-        if (opt.isEmpty()) {
-            // Auto-assign: pick problem based on day-of-year mod problem count
-            long count = problemRepository.count();
-            if (count == 0) return ResponseEntity.noContent().build();
-            long idx = (today.getDayOfYear() % count) + 1;
-            // Find closest existing id
-            Problem problem = problemRepository.findById(idx)
-                .orElse(problemRepository.findAll().get(0));
-
-            DailyChallenge dc = new DailyChallenge();
-            dc.setChallengeDate(today);
-            dc.setProblemId(problem.getId());
-            dc.setBonusPoints(50);
-            dailyChallengeRepository.save(dc);
-            opt = Optional.of(dc);
-        }
-
-        DailyChallenge dc = opt.get();
+        if (dc == null) return ResponseEntity.noContent().build();
         Problem problem = problemRepository.findById(dc.getProblemId()).orElse(null);
 
         Map<String, Object> response = new HashMap<>();
@@ -77,23 +73,25 @@ public class DailyChallengeController {
 
         if (!solved) return ResponseEntity.badRequest().body("Solve the daily problem first!");
 
+        if (dc.hasUserClaimed(request.getUserId()))
+            return ResponseEntity.badRequest().body("Bonus already claimed today!");
+
         User user = userRepository.findById(request.getUserId())
             .orElseThrow(() -> new RuntimeException("User not found"));
 
-        // Check if already claimed (points would be double-awarded)
-        // Simple guard: bonus is 50, regular solve is 10 — if points mod 50 == 0 already claimed
-        // Better: use a claimed flag — for simplicity track via a dedicated field
         user.setPoints(user.getPoints() + dc.getBonusPoints());
         userRepository.save(user);
+        dc.addClaimedUser(request.getUserId());
+        dailyChallengeRepository.save(dc);
 
         Map<String, Object> res = new HashMap<>();
         res.put("message", "Bonus claimed! +" + dc.getBonusPoints() + " points");
         res.put("newPoints", user.getPoints());
         return ResponseEntity.ok(res);
     }
-}
 
-@Data
-class ClaimRequest {
-    private Long userId;
+    @Data
+    static class ClaimRequest {
+        private Long userId;
+    }
 }

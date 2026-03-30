@@ -10,6 +10,7 @@ import WorkspacePage from './pages/WorkspacePage';
 import LeaderboardPage from './pages/LeaderboardPage';
 import ProfilePage from './pages/ProfilePage';
 import DailyChallengePage from './pages/DailyChallengePage';
+import PlaygroundPage from './pages/PlaygroundPage';
 import AdminLoginPage from './pages/AdminLoginPage';
 import AdminDashboard from './pages/AdminDashboard';
 
@@ -26,8 +27,7 @@ function App() {
   useEffect(() => {
     const stored = getStored('code_arena_user');
     if (!stored?.id) return;
-    const base = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8080';
-    axios.get(`${base}/api/users/${stored.id}`).catch(() => {
+    axios.get(`/api/users/${stored.id}`).catch(() => {
       setCurrentUser(null);
       localStorage.removeItem('code_arena_user');
     });
@@ -71,6 +71,7 @@ function App() {
                   <Route path="/leaderboard" element={<LeaderboardPage currentUser={currentUser} />} />
                   <Route path="/profile"     element={<ProfilePage currentUser={currentUser} />} />
                   <Route path="/daily"       element={<DailyChallengePage currentUser={currentUser} />} />
+                  <Route path="/playground"  element={<PlaygroundPage />} />
                 </Routes>
               </main>
             </div>

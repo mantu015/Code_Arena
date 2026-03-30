@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import API_BASE_URL from '../apiConfig';
 import { X, Mail, Lock } from 'lucide-react';
 
 const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) => {
@@ -38,7 +37,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
     
     try {
       const endpoint = mode === 'login' ? '/api/users/login' : '/api/users/register';
-      const res = await axios.post(`${API_BASE_URL}${endpoint}`, { username: email, password });
+      const res = await axios.post(endpoint, { username: email, password });
       
       setLoading(false);
       setEmail('');

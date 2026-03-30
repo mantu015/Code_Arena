@@ -1,0 +1,115 @@
+[INFO] Scanning for projects...
+[INFO] 
+[INFO] -----------------------< com.codearena:backend >------------------------
+[INFO] Building backend 0.0.1-SNAPSHOT
+[INFO]   from pom.xml
+[INFO] --------------------------------[ jar ]---------------------------------
+[INFO] 
+[INFO] >>> spring-boot:3.2.3:run (default-cli) > test-compile @ backend >>>
+[INFO] 
+[INFO] --- resources:3.3.1:resources (default-resources) @ backend ---
+[INFO] Copying 1 resource from src\main\resources to target\classes
+[INFO] Copying 2 resources from src\main\resources to target\classes
+[INFO] 
+[INFO] --- compiler:3.11.0:compile (default-compile) @ backend ---
+[INFO] Changes detected - recompiling the module! :input tree
+[INFO] Compiling 23 source files with javac [debug release 17] to target\classes
+[INFO] 
+[INFO] --- resources:3.3.1:testResources (default-testResources) @ backend ---
+[INFO] skip non existing resourceDirectory c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend\src\test\resources
+[INFO] 
+[INFO] --- compiler:3.11.0:testCompile (default-testCompile) @ backend ---
+[INFO] Changes detected - recompiling the module! :dependency
+[INFO] 
+[INFO] <<< spring-boot:3.2.3:run (default-cli) < test-compile @ backend <<<
+[INFO] 
+[INFO] 
+[INFO] --- spring-boot:3.2.3:run (default-cli) @ backend ---
+[INFO] Attaching agents: []
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.3)
+
+2026-03-30T23:07:42.260+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : Starting CodeArenaApplication using Java 23.0.1 with PID 6172 (c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend\target\classes started by manga in c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend)
+2026-03-30T23:07:42.262+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-03-30T23:07:42.331+05:30  INFO 6172 --- [backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : Devtools property defaults active! Set 'spring.devtools.add-properties' to 'false' to disable
+2026-03-30T23:07:42.332+05:30  INFO 6172 --- [backend] [  restartedMain] .e.DevToolsPropertyDefaultsPostProcessor : For additional web related logging consider setting the 'logging.level.web' property to 'DEBUG'
+2026-03-30T23:07:43.103+05:30  INFO 6172 --- [backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30T23:07:43.156+05:30  INFO 6172 --- [backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 47 ms. Found 4 JPA repository interfaces.
+2026-03-30T23:07:43.625+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-03-30T23:07:43.636+05:30  INFO 6172 --- [backend] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-30T23:07:43.637+05:30  INFO 6172 --- [backend] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-03-30T23:07:43.679+05:30  INFO 6172 --- [backend] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-30T23:07:43.679+05:30  INFO 6172 --- [backend] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 1347 ms
+2026-03-30T23:07:43.700+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Starting...
+2026-03-30T23:07:43.973+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-1 - Added connection conn1: url=jdbc:h2:file:./data/codearena user=SA
+2026-03-30T23:07:43.975+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Start completed.
+2026-03-30T23:07:43.985+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/codearena'
+2026-03-30T23:07:44.162+05:30  INFO 6172 --- [backend] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-30T23:07:44.202+05:30  INFO 6172 --- [backend] [  restartedMain] org.hibernate.Version                    : HHH000412: Hibernate ORM core version 6.4.4.Final
+2026-03-30T23:07:44.227+05:30  INFO 6172 --- [backend] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-30T23:07:44.414+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30T23:07:44.456+05:30  WARN 6172 --- [backend] [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-30T23:07:45.259+05:30  INFO 6172 --- [backend] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-30T23:07:45.261+05:30  INFO 6172 --- [backend] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30T23:07:45.877+05:30  WARN 6172 --- [backend] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30T23:07:46.182+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-03-30T23:07:46.211+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-03-30T23:07:46.219+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : Started CodeArenaApplication in 4.377 seconds (process running for 4.76)
+2026-03-30T23:09:31.417+05:30  INFO 6172 --- [backend] [   File Watcher] rtingClassPathChangeChangedEventListener : Restarting due to 2 class path changes (0 additions, 0 deletions, 2 modifications)
+2026-03-30T23:09:31.425+05:30  INFO 6172 --- [backend] [       Thread-7] j.LocalContainerEntityManagerFactoryBean : Closing JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30T23:09:31.427+05:30  INFO 6172 --- [backend] [       Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown initiated...
+2026-03-30T23:09:31.636+05:30  INFO 6172 --- [backend] [       Thread-7] com.zaxxer.hikari.HikariDataSource       : HikariPool-1 - Shutdown completed.
+
+  .   ____          _            __ _ _
+ /\\ / ___'_ __ _ _(_)_ __  __ _ \ \ \ \
+( ( )\___ | '_ | '_| | '_ \/ _` | \ \ \ \
+ \\/  ___)| |_)| | | | | || (_| |  ) ) ) )
+  '  |____| .__|_| |_|_| |_\__, | / / / /
+ =========|_|==============|___/=/_/_/_/
+ :: Spring Boot ::                (v3.2.3)
+
+2026-03-30T23:09:31.689+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : Starting CodeArenaApplication using Java 23.0.1 with PID 6172 (c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend\target\classes started by manga in c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend)
+2026-03-30T23:09:31.690+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : No active profile set, falling back to 1 default profile: "default"
+2026-03-30T23:09:31.840+05:30  INFO 6172 --- [backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Bootstrapping Spring Data JPA repositories in DEFAULT mode.
+2026-03-30T23:09:31.854+05:30  INFO 6172 --- [backend] [  restartedMain] .s.d.r.c.RepositoryConfigurationDelegate : Finished Spring Data repository scanning in 12 ms. Found 4 JPA repository interfaces.
+2026-03-30T23:09:31.936+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat initialized with port 8080 (http)
+2026-03-30T23:09:31.936+05:30  INFO 6172 --- [backend] [  restartedMain] o.apache.catalina.core.StandardService   : Starting service [Tomcat]
+2026-03-30T23:09:31.936+05:30  INFO 6172 --- [backend] [  restartedMain] o.apache.catalina.core.StandardEngine    : Starting Servlet engine: [Apache Tomcat/10.1.19]
+2026-03-30T23:09:31.951+05:30  INFO 6172 --- [backend] [  restartedMain] o.a.c.c.C.[Tomcat].[localhost].[/]       : Initializing Spring embedded WebApplicationContext
+2026-03-30T23:09:31.951+05:30  INFO 6172 --- [backend] [  restartedMain] w.s.c.ServletWebServerApplicationContext : Root WebApplicationContext: initialization completed in 260 ms
+2026-03-30T23:09:31.974+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Starting...
+2026-03-30T23:09:32.050+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.pool.HikariPool        : HikariPool-2 - Added connection conn12: url=jdbc:h2:file:./data/codearena user=SA
+2026-03-30T23:09:32.051+05:30  INFO 6172 --- [backend] [  restartedMain] com.zaxxer.hikari.HikariDataSource       : HikariPool-2 - Start completed.
+2026-03-30T23:09:32.051+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.a.h2.H2ConsoleAutoConfiguration    : H2 console available at '/h2-console'. Database available at 'jdbc:h2:file:./data/codearena'
+2026-03-30T23:09:32.086+05:30  INFO 6172 --- [backend] [  restartedMain] o.hibernate.jpa.internal.util.LogHelper  : HHH000204: Processing PersistenceUnitInfo [name: default]
+2026-03-30T23:09:32.089+05:30  INFO 6172 --- [backend] [  restartedMain] o.h.c.internal.RegionFactoryInitiator    : HHH000026: Second-level cache disabled
+2026-03-30T23:09:32.095+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.o.j.p.SpringPersistenceUnitInfo      : No LoadTimeWeaver setup: ignoring JPA class transformer
+2026-03-30T23:09:32.095+05:30  WARN 6172 --- [backend] [  restartedMain] org.hibernate.orm.deprecation            : HHH90000025: H2Dialect does not need to be specified explicitly using 'hibernate.dialect' (remove the property setting and it will be selected by default)
+2026-03-30T23:09:32.172+05:30  INFO 6172 --- [backend] [  restartedMain] o.h.e.t.j.p.i.JtaPlatformInitiator       : HHH000489: No JTA platform available (set 'hibernate.transaction.jta.platform' to enable JTA platform integration)
+2026-03-30T23:09:32.173+05:30  INFO 6172 --- [backend] [  restartedMain] j.LocalContainerEntityManagerFactoryBean : Initialized JPA EntityManagerFactory for persistence unit 'default'
+2026-03-30T23:09:32.310+05:30  WARN 6172 --- [backend] [  restartedMain] JpaBaseConfiguration$JpaWebConfiguration : spring.jpa.open-in-view is enabled by default. Therefore, database queries may be performed during view rendering. Explicitly configure spring.jpa.open-in-view to disable this warning
+2026-03-30T23:09:32.366+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.d.a.OptionalLiveReloadServer       : LiveReload server is running on port 35729
+2026-03-30T23:09:32.372+05:30  INFO 6172 --- [backend] [  restartedMain] o.s.b.w.embedded.tomcat.TomcatWebServer  : Tomcat started on port 8080 (http) with context path ''
+2026-03-30T23:09:32.373+05:30  INFO 6172 --- [backend] [  restartedMain] com.codearena.CodeArenaApplication       : Started CodeArenaApplication in 0.698 seconds (process running for 110.915)
+2026-03-30T23:09:32.377+05:30  INFO 6172 --- [backend] [  restartedMain] .ConditionEvaluationDeltaLoggingListener : Condition evaluation unchanged
+[INFO] ------------------------------------------------------------------------
+[INFO] BUILD FAILURE
+[INFO] ------------------------------------------------------------------------
+[INFO] Total time:  02:48 min
+[INFO] Finished at: 2026-03-30T23:10:24+05:30
+[INFO] ------------------------------------------------------------------------
+[ERROR] Failed to execute goal org.springframework.boot:spring-boot-maven-plugin:3.2.3:run (default-cli) on project backend: Process terminated with exit code: 1 -> [Help 1]
+[ERROR] 
+[ERROR] To see the full stack trace of the errors, re-run Maven with the -e switch.
+[ERROR] Re-run Maven using the -X switch to enable full debug logging.
+[ERROR] 
+[ERROR] For more information about the errors and possible solutions, please read the following articles:
+[ERROR] [Help 1] http://cwiki.apache.org/confluence/display/MAVEN/MojoExecutionException
+
+c:\Users\manga\OneDrive\Desktop\Code_Arena\Code-arena\Code-arena\backend>

@@ -6,3 +6,6 @@ MERGE INTO users (username, password, points, role) KEY(username) VALUES ('admin
 
 -- Ensure existing rows have a role value
 UPDATE users SET role = 'USER' WHERE role IS NULL;
+
+-- Add claimed_user_ids column to daily_challenges if not exists
+ALTER TABLE daily_challenges ADD COLUMN IF NOT EXISTS claimed_user_ids VARCHAR(2000) DEFAULT '';
