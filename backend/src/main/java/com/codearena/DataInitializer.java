@@ -101,7 +101,7 @@ public class DataInitializer implements CommandLineRunner {
             "2. Open brackets must be closed in the correct order.\n" +
             "3. Every close bracket has a corresponding open bracket of the same type."
         );
-        p7.setTestCases("[{\"input\":\"s = \\\"()\\\"\",\"expected\":\"true\"},{\"input\":\"s = \\\"()[]{}\\\"\",\"expected\":\"true\"},{\"input\":\"s = \\\"(]\\\"\",\"expected\":\"false\"}]");
+        p7.setTestCases("[{\"input\":\"s = '()'\",\"expected\":\"true\"},{\"input\":\"s = '()[]{}'\",\"expected\":\"true\"},{\"input\":\"s = '(]'\",\"expected\":\"false\"}]");
         problemRepository.save(p7);
 
         // Problem 8: Merge Two Sorted Lists
@@ -170,7 +170,7 @@ public class DataInitializer implements CommandLineRunner {
             "it reads the same forward and backward. Alphanumeric characters include letters and numbers.\n\n" +
             "Given a string s, return true if it is a palindrome, or false otherwise."
         );
-        p13.setTestCases("[{\"input\":\"s = \\\"A man, a plan, a canal: Panama\\\"\",\"expected\":\"true\"},{\"input\":\"s = \\\"race a car\\\"\",\"expected\":\"false\"}]");
+        p13.setTestCases("[{\"input\":\"s = 'A man, a plan, a canal: Panama'\",\"expected\":\"true\"},{\"input\":\"s = 'race a car'\",\"expected\":\"false\"}]");
         problemRepository.save(p13);
 
         // Problem 14: Reverse Linked List
