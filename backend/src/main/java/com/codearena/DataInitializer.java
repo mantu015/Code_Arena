@@ -16,7 +16,7 @@ public class DataInitializer implements CommandLineRunner {
 
     @Override
     public void run(String... args) {
-        if (problemRepository.count() < 16) {
+        if (problemRepository.count() == 0) {
             seed();
         }
         achievementService.initializeAchievements();
