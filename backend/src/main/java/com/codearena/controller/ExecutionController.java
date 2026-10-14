@@ -6,20 +6,31 @@ import com.codearena.service.CodeExecutionService;
 import com.codearena.service.SubmissionService;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/execute")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5090", "http://localhost:5173", "http://localhost:5174"})
 public class ExecutionController {
 
     private final CodeExecutionService executionService;
     private final SubmissionService submissionService;
 
+    @Value("${app.execution.enabled:true}")
+    private boolean executionEnabled;
+
     @PostMapping
-    public ResponseEntity<ExecutionResult> execute(@RequestBody ExecuteRequest request) {
+    public ResponseEntity<?> execute(@RequestBody ExecuteRequest request) {
+        if (!executionEnabled) {
+            return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .body(Map.of("message", "Code execution is disabled on this deployment."));
+        }
+
         ExecutionResult result = executionService.execute(
             request.getProblemId(),
             request.getCode(),

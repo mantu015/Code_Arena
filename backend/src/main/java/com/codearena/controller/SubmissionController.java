@@ -12,7 +12,6 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/submissions")
 @RequiredArgsConstructor
-@CrossOrigin(origins = {"http://localhost:5173", "http://localhost:5174"})
 public class SubmissionController {
 
     private final SubmissionService submissionService;

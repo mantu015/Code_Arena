@@ -113,6 +113,54 @@ Access the app at **`http://localhost:5173`**
 
 ---
 
+## 🚀 Deploy to Vercel + Render
+
+The frontend is a Vite static site and can be deployed on Vercel. The Spring Boot backend must run as a separate web service; this repository includes a Dockerfile for Render.
+
+### 1. Push the deployment changes to GitHub
+
+Commit and push the changes on the branch you want to deploy. Vercel and Render will build from that GitHub branch.
+
+### 2. Create the frontend deployment on Vercel
+
+1. In Vercel, import this GitHub repository and select the same branch.
+2. Set the **Root Directory** to `frontend`.
+3. Select **Vite** as the framework. Use `npm run build` as the build command and `dist` as the output directory.
+4. Add `VITE_API_BASE_URL` with a temporary value such as `https://pending-backend.onrender.com`, then deploy.
+5. Note the production domain Vercel assigns to the site. The frontend API will not work until the backend is deployed and the environment variable is updated in step 4.
+
+The included `frontend/vercel.json` routes direct page visits and refreshes to the React application.
+
+### 3. Deploy the backend on Render
+
+1. In Render, create a **Web Service** and connect this repository.
+2. Select the deployment branch, choose **Docker**, and set the root directory to `backend` (the Dockerfile is `backend/Dockerfile`).
+3. Add a **Persistent Disk** mounted at `/var/data`. A persistent disk requires a Render plan that supports disks.
+4. Add these environment variables:
+
+   | Key | Value |
+   | --- | --- |
+   | `DATABASE_URL` | `jdbc:h2:file:/var/data/codearena` |
+   | `H2_CONSOLE_ENABLED` | `false` |
+   | `CODE_EXECUTION_ENABLED` | `false` |
+   | `CORS_ALLOWED_ORIGINS` | The exact Vercel production origin from step 2 |
+
+5. Set the health-check path to `/api/problems`, then deploy. Save the backend URL, for example `https://your-code-arena-api.onrender.com`.
+
+For a Vercel custom domain, include its exact `https://` origin in `CORS_ALLOWED_ORIGINS` too. Separate multiple origins with commas; do not add a trailing slash.
+
+### 4. Connect and verify
+
+1. In Vercel project settings, change `VITE_API_BASE_URL` to the Render backend URL (for example, `https://your-code-arena-api.onrender.com`).
+2. Redeploy the frontend so the backend URL is included in the production build.
+3. Open the Vercel URL, check that the problems list loads, and test registration/login. If the browser reports a CORS error, confirm `CORS_ALLOWED_ORIGINS` exactly matches the Vercel site origin and redeploy the backend.
+
+### Code execution safety
+
+Code submissions are currently launched as operating-system processes and are **not sandboxed**. For public deployments, leave `CODE_EXECUTION_ENABLED=false`; the submission and playground run endpoints will return HTTP 503 while the rest of the site remains available. Do not enable execution on a public service until it has been moved to a properly isolated sandbox.
+
+---
+
 ## 📁 Project Structure
 
 ```
