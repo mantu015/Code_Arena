@@ -6,6 +6,7 @@ import com.codearena.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -15,23 +16,49 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final SubmissionRepository submissionRepository;
+    private final EmailVerificationService emailVerificationService;
+    private final PasswordEncoder passwordEncoder;
 
-    public User registerUser(String username, String password) {
-        if (userRepository.findByUsername(username).isPresent()) {
-            throw new RuntimeException("User already exists");
+    public void requestRegistrationVerification(String email) {
+        emailVerificationService.requestVerification(email);
+    }
+
+    public User verifyAndRegister(String email, String code, String password) {
+        validatePassword(password);
+        String verifiedEmail = emailVerificationService.consumeVerification(email, code);
+        if (userRepository.findByUsername(verifiedEmail).isPresent()) {
+            throw new IllegalArgumentException("An account with this email already exists.");
         }
         User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
+        user.setUsername(verifiedEmail);
+        user.setPassword(passwordEncoder.encode(password));
         user.setPoints(0);
         return userRepository.save(user);
+    }
+
+    private void validatePassword(String password) {
+        if (password == null || !password.matches("^(?=.*[A-Z])(?=.*\\d)(?=.*[^A-Za-z0-9\\s]).+$")) {
+            throw new IllegalArgumentException(
+                    "Password must contain at least one uppercase letter, one number, and one special character.");
+        }
     }
 
     public User login(String username, String password) {
         User user = userRepository.findByUsername(username)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-        if (!user.getPassword().equals(password)) {
+        String storedPassword = user.getPassword();
+        boolean isEncoded = storedPassword.startsWith("$2a$")
+                || storedPassword.startsWith("$2b$")
+                || storedPassword.startsWith("$2y$");
+        boolean matches = isEncoded
+                ? passwordEncoder.matches(password, storedPassword)
+                : storedPassword.equals(password);
+        if (!matches) {
             throw new RuntimeException("Invalid credentials");
+        }
+        if (!isEncoded && !"ADMIN".equals(user.getRole())) {
+            user.setPassword(passwordEncoder.encode(password));
+            userRepository.save(user);
         }
         return user;
     }

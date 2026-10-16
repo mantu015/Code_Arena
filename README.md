@@ -144,10 +144,20 @@ The included `frontend/vercel.json` routes direct page visits and refreshes to t
    | `H2_CONSOLE_ENABLED` | `false` |
    | `CODE_EXECUTION_ENABLED` | `false` |
    | `CORS_ALLOWED_ORIGINS` | The exact Vercel production origin from step 2 |
+   | `MAIL_HOST` | SMTP hostname for the email provider |
+   | `MAIL_PORT` | SMTP port, typically `587` |
+   | `MAIL_USERNAME` | SMTP username |
+   | `MAIL_PASSWORD` | SMTP password or provider app password |
+   | `MAIL_FROM` | Sender email address accepted by the SMTP provider |
+   | `MAIL_SMTP_AUTH` | `true` when the SMTP server requires authentication |
+   | `MAIL_SMTP_STARTTLS` | `true` for STARTTLS (typically port `587`) |
+   | `MAIL_SMTP_SSL` | `true` for implicit TLS (typically port `465`) |
 
 5. Set the health-check path to `/api/problems`, then deploy. Save the backend URL, for example `https://your-code-arena-api.onrender.com`.
 
 For a Vercel custom domain, include its exact `https://` origin in `CORS_ALLOWED_ORIGINS` too. Separate multiple origins with commas; do not add a trailing slash.
+
+New accounts are created only after the user enters a six-digit code sent to the provided email address. Verification codes expire after 10 minutes, and the SMTP variables above must be configured for registration to work. Passwords must include an uppercase letter, a number, and a special character. Passwords are stored as BCrypt hashes; existing plaintext passwords are upgraded after a successful login.
 
 ### 4. Connect and verify
 

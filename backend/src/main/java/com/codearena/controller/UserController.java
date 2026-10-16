@@ -2,10 +2,15 @@ package com.codearena.controller;
 
 import com.codearena.model.User;
 import com.codearena.service.UserService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
@@ -15,11 +20,21 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody AuthRequest request) {
+    public ResponseEntity<?> requestRegistrationCode(@Valid @RequestBody EmailRequest request) {
         try {
-            User user = userService.registerUser(request.getUsername(), request.getPassword());
-            return ResponseEntity.ok(user);
-        } catch (Exception e) {
+            userService.requestRegistrationVerification(request.getEmail());
+            return ResponseEntity.accepted().body(Map.of("message", "Verification code sent. Check your email inbox."));
+        } catch (IllegalArgumentException | IllegalStateException e) {
+            return ResponseEntity.badRequest().body(e.getMessage());
+        }
+    }
+
+    @PostMapping("/verify-email")
+    public ResponseEntity<?> verifyEmailAndRegister(@Valid @RequestBody VerificationRequest request) {
+        try {
+            User user = userService.verifyAndRegister(request.getEmail(), request.getCode(), request.getPassword());
+            return ResponseEntity.ok(Map.of("id", user.getId(), "username", user.getUsername()));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
@@ -50,5 +65,23 @@ public class UserController {
 @Data
 class AuthRequest {
     private String username;
+    private String password;
+}
+
+@Data
+class EmailRequest {
+    @NotBlank
+    @Email
+    private String email;
+}
+
+@Data
+class VerificationRequest {
+    @NotBlank
+    @Email
+    private String email;
+    @NotBlank
+    private String code;
+    @NotBlank
     private String password;
 }
