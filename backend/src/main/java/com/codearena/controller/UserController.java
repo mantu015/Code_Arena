@@ -20,19 +20,9 @@ public class UserController {
     private final UserService userService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> requestRegistrationCode(@Valid @RequestBody EmailRequest request) {
+    public ResponseEntity<?> register(@Valid @RequestBody RegistrationRequest request) {
         try {
-            userService.requestRegistrationVerification(request.getEmail());
-            return ResponseEntity.accepted().body(Map.of("message", "Verification code sent. Check your email inbox."));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
-    @PostMapping("/verify-email")
-    public ResponseEntity<?> verifyEmailAndRegister(@Valid @RequestBody VerificationRequest request) {
-        try {
-            User user = userService.verifyAndRegister(request.getEmail(), request.getCode(), request.getPassword());
+            User user = userService.registerUser(request.getEmail(), request.getPassword());
             return ResponseEntity.ok(Map.of("id", user.getId(), "username", user.getUsername()));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(e.getMessage());
@@ -69,19 +59,10 @@ class AuthRequest {
 }
 
 @Data
-class EmailRequest {
+class RegistrationRequest {
     @NotBlank
     @Email
     private String email;
-}
-
-@Data
-class VerificationRequest {
-    @NotBlank
-    @Email
-    private String email;
-    @NotBlank
-    private String code;
     @NotBlank
     private String password;
 }

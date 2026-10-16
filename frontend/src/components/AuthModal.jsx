@@ -7,8 +7,6 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [verificationCode, setVerificationCode] = useState('');
-  const [verificationSent, setVerificationSent] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [successMsg, setSuccessMsg] = useState('');
@@ -44,23 +42,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
     setLoading(true);
     try {
       if (mode === 'register') {
-          if (!verificationSent) {
-            const res = await axios.post('/api/users/register', { email });
-            setVerificationSent(true);
-            setSuccessMsg(res.data.message);
-            return;
-          }
-          await axios.post('/api/users/verify-email', {
-            email,
-            code: verificationCode,
-            password,
-          });
+          await axios.post('/api/users/register', { email, password });
           setEmail('');
           setPassword('');
           setConfirmPassword('');
-          setVerificationCode('');
-          setVerificationSent(false);
-          setSuccessMsg('Email verified and registration successful. Please log in.');
+          setSuccessMsg('Registration successful. Please log in.');
           setMode('login');
       } else {
           const res = await axios.post('/api/users/login', { username: email, password });
@@ -81,31 +67,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
     }
   };
 
-  const handleResendCode = async () => {
-    setLoading(true);
-    setError('');
-    setSuccessMsg('');
-    try {
-      const res = await axios.post('/api/users/register', { email });
-      setSuccessMsg(res.data.message);
-    } catch (err) {
-      if (err.response?.data) {
-        setError(typeof err.response.data === 'string' ? err.response.data : 'Could not send the verification code.');
-      } else {
-        setError('Network error: Cannot reach the backend server');
-      }
-    } finally {
-      setLoading(false);
-    }
-  };
-
   const toggleMode = (newMode) => {
       setMode(newMode);
       setError('');
       setSuccessMsg('');
       setConfirmPassword('');
-      setVerificationCode('');
-      setVerificationSent(false);
   };
 
   return (
@@ -130,14 +96,7 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
             <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Email Address</label>
             <div style={{ position: 'relative' }}>
               <Mail size={18} style={{ position: 'absolute', left: '12px', top: '50%', transform: 'translateY(-50%)', color: 'var(--text-secondary)' }} />
-              <input type="email" className="input-field" style={{ paddingLeft: '2.5rem' }} placeholder="Enter email address" value={email} onChange={e => {
-                setEmail(e.target.value);
-                if (verificationSent) {
-                  setVerificationSent(false);
-                  setVerificationCode('');
-                  setSuccessMsg('');
-                }
-              }} required />
+              <input type="email" className="input-field" style={{ paddingLeft: '2.5rem' }} placeholder="Enter email address" value={email} onChange={e => setEmail(e.target.value)} required />
             </div>
           </div>
           
@@ -172,32 +131,11 @@ const AuthModal = ({ isOpen, onClose, initialMode = 'login', onAuthSuccess }) =>
                 </div>
               )}
 
-              {mode === 'register' && verificationSent && (
-                <div>
-                  <label style={{ display: 'block', marginBottom: '0.5rem', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Email Verification Code</label>
-                  <input
-                    type="text"
-                    className="input-field"
-                    placeholder="Enter the 6-digit code"
-                    value={verificationCode}
-                    onChange={e => setVerificationCode(e.target.value.replace(/\D/g, '').slice(0, 6))}
-                    inputMode="numeric"
-                    pattern="[0-9]{6}"
-                    maxLength={6}
-                    required
-                  />
-                  <button type="button" onClick={handleResendCode} disabled={loading}
-                    style={{ marginTop: '0.5rem', padding: 0, background: 'none', border: 'none',
-                      color: 'var(--brand-primary)', cursor: loading ? 'default' : 'pointer', fontSize: '0.85rem' }}>
-                    Resend verification code
-                  </button>
-                </div>
-              )}
             </div>
           )}
 
           <button type="submit" className="btn btn-primary" style={{ width: '100%', marginTop: '1rem', padding: '0.875rem' }} disabled={loading}>
-            {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : mode === 'register' ? (verificationSent ? 'Verify Email & Sign Up' : 'Send Verification Code') : 'Send Reset Link')}
+            {loading ? 'Processing...' : (mode === 'login' ? 'Sign In' : mode === 'register' ? 'Sign Up' : 'Send Reset Link')}
           </button>
         </form>
 

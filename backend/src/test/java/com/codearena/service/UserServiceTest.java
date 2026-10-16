@@ -16,43 +16,45 @@ import static org.mockito.Mockito.*;
 
 class UserServiceTest {
     private UserRepository userRepository;
-    private EmailVerificationService emailVerificationService;
     private PasswordEncoder passwordEncoder;
     private UserService userService;
 
     @BeforeEach
     void setUp() {
         userRepository = mock(UserRepository.class);
-        emailVerificationService = mock(EmailVerificationService.class);
         passwordEncoder = new BCryptPasswordEncoder(4);
-        userService = new UserService(userRepository, mock(SubmissionRepository.class), emailVerificationService, passwordEncoder);
+        userService = new UserService(userRepository, mock(SubmissionRepository.class), passwordEncoder);
     }
 
     @Test
     void rejectsRegistrationPasswordsMissingRequiredCharacterTypes() {
         assertThrows(IllegalArgumentException.class,
-                () -> userService.verifyAndRegister("user@example.com", "123456", "password1!"));
+                () -> userService.registerUser("user@example.com", "password1!"));
         assertThrows(IllegalArgumentException.class,
-                () -> userService.verifyAndRegister("user@example.com", "123456", "Password!"));
+                () -> userService.registerUser("user@example.com", "Password!"));
         assertThrows(IllegalArgumentException.class,
-                () -> userService.verifyAndRegister("user@example.com", "123456", "Password1"));
-        verifyNoInteractions(emailVerificationService, userRepository);
+                () -> userService.registerUser("user@example.com", "Password1"));
+        verifyNoInteractions(userRepository);
     }
 
     @Test
-    void registersOnlyAfterEmailCodeIsConsumedAndPasswordIsStrong() {
-        when(emailVerificationService.consumeVerification("user@example.com", "123456"))
-                .thenReturn("user@example.com");
+    void registersWithValidEmailAndStrongPassword() {
         when(userRepository.findByUsername("user@example.com")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
-        User result = userService.verifyAndRegister("user@example.com", "123456", "Password1!");
+        User result = userService.registerUser("User@Example.com", "Password1!");
 
         assertEquals("user@example.com", result.getUsername());
         org.junit.jupiter.api.Assertions.assertTrue(passwordEncoder.matches("Password1!", result.getPassword()));
         org.junit.jupiter.api.Assertions.assertNotEquals("Password1!", result.getPassword());
-        verify(emailVerificationService).consumeVerification("user@example.com", "123456");
         verify(userRepository).save(any(User.class));
+    }
+
+    @Test
+    void rejectsMalformedEmailAddresses() {
+        assertThrows(IllegalArgumentException.class,
+                () -> userService.registerUser("not-an-email", "Password1!"));
+        verifyNoInteractions(userRepository);
     }
 
     @Test

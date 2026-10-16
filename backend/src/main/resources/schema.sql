@@ -7,14 +7,6 @@ CREATE TABLE IF NOT EXISTS users (
     role VARCHAR(20) DEFAULT 'USER'
 );
 
-CREATE TABLE IF NOT EXISTS email_verifications (
-    email VARCHAR(255) PRIMARY KEY,
-    code_hash VARCHAR(255) NOT NULL,
-    created_at TIMESTAMP NOT NULL,
-    expires_at TIMESTAMP NOT NULL,
-    attempts INT DEFAULT 0
-);
-
 -- Create Problem table
 CREATE TABLE IF NOT EXISTS problems (
     id BIGINT AUTO_INCREMENT PRIMARY KEY,

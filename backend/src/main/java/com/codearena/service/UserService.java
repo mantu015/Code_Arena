@@ -16,24 +16,26 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserRepository userRepository;
     private final SubmissionRepository submissionRepository;
-    private final EmailVerificationService emailVerificationService;
     private final PasswordEncoder passwordEncoder;
 
-    public void requestRegistrationVerification(String email) {
-        emailVerificationService.requestVerification(email);
-    }
-
-    public User verifyAndRegister(String email, String code, String password) {
+    public User registerUser(String email, String password) {
         validatePassword(password);
-        String verifiedEmail = emailVerificationService.consumeVerification(email, code);
-        if (userRepository.findByUsername(verifiedEmail).isPresent()) {
+        String normalizedEmail = normalizeEmail(email);
+        if (userRepository.findByUsername(normalizedEmail).isPresent()) {
             throw new IllegalArgumentException("An account with this email already exists.");
         }
         User user = new User();
-        user.setUsername(verifiedEmail);
+        user.setUsername(normalizedEmail);
         user.setPassword(passwordEncoder.encode(password));
         user.setPoints(0);
         return userRepository.save(user);
+    }
+
+    private String normalizeEmail(String email) {
+        if (email == null || !email.trim().matches("^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$")) {
+            throw new IllegalArgumentException("Enter a valid email address.");
+        }
+        return email.trim().toLowerCase(Locale.ROOT);
     }
 
     private void validatePassword(String password) {
