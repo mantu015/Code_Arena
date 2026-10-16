@@ -291,11 +291,10 @@ const WorkspacePage = ({ currentUser }) => {
   const statusColor = result ? (STATUS_COLOR[result.status] || 'var(--text-secondary)') : 'var(--text-secondary)';
 
   return (
-    <div style={{ display: 'flex', height: 'calc(100vh - 72px)', overflow: 'hidden', position: 'relative' }}>
+    <div className="workspace-layout">
 
       {/* LEFT: Problem */}
-      <div style={{ flex: '1', borderRight: '1px solid var(--border-color)', overflowY: 'auto',
-        padding: '2rem', background: 'rgba(0,0,0,0.2)', minWidth: 0 }}>
+      <div className="workspace-problem" style={{ background: 'rgba(0,0,0,0.2)' }}>
         {problem ? (
           <>
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
@@ -328,10 +327,10 @@ const WorkspacePage = ({ currentUser }) => {
       </div>
 
       {/* RIGHT: Editor + Console */}
-      <div style={{ flex: '1.4', display: 'flex', flexDirection: 'column', minWidth: 0 }}>
+      <div className="workspace-editor">
 
         {/* Toolbar */}
-        <div style={{ padding: '0.6rem 1rem', borderBottom: '1px solid var(--border-color)',
+        <div className="workspace-toolbar" style={{
           background: 'var(--bg-secondary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
           <select value={language} onChange={e => setLanguage(e.target.value)}
             style={{ background: 'rgba(0,0,0,0.3)', border: '1px solid var(--border-color)',
@@ -363,7 +362,7 @@ const WorkspacePage = ({ currentUser }) => {
         </div>
 
         {/* Monaco Editor */}
-        <div style={{ flex: 1, minHeight: 0 }}>
+        <div className="workspace-code">
           <Editor
             height="100%"
             theme="vs-dark"
@@ -384,7 +383,7 @@ const WorkspacePage = ({ currentUser }) => {
         </div>
 
         {/* Results / Console Panel */}
-        <div style={{ height: '38%', borderTop: '1px solid var(--border-color)',
+        <div className="workspace-results" style={{
           background: '#0d0d14', display: 'flex', flexDirection: 'column' }}>
 
           {/* Tab bar */}

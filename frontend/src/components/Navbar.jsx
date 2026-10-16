@@ -28,7 +28,7 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
   const isActive = (path) => location.pathname === path;
 
   return (
-    <nav style={{ padding: '0.875rem 2rem', borderBottom: '1px solid var(--border-color)',
+    <nav className="app-navbar" style={{ padding: '0.875rem 2rem', borderBottom: '1px solid var(--border-color)',
       background: 'var(--bg-glass)', backdropFilter: 'blur(12px)',
       position: 'sticky', top: 0, zIndex: 100,
       display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -40,7 +40,7 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
 
       {/* Nav Links — only shown when logged in */}
       {currentUser && (
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+        <div className="app-nav-links" style={{ display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
           {navLinks.map(link => (
             <Link key={link.path} to={link.path}
               style={{ display: 'flex', alignItems: 'center', gap: 6, padding: '0.45rem 0.9rem',
@@ -56,7 +56,7 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
         </div>
       )}
 
-      <div style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
+      <div className="app-nav-actions" style={{ display: 'flex', gap: 10, alignItems: 'center' }}>
         <button onClick={toggleTheme} className="btn btn-secondary"
           style={{ padding: '0.5rem', borderRadius: 10, display: 'flex', alignItems: 'center', justifyContent: 'center' }}
           title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}>

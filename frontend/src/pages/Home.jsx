@@ -12,7 +12,7 @@ const Home = ({ currentUser }) => {
           <Zap size={15} fill="currentColor" /> Code Arena Beta
         </div>
 
-        <h1 style={{ fontSize: '4rem', lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
+        <h1 className="home-heading" style={{ fontSize: '4rem', lineHeight: 1.1, marginBottom: '1.5rem', letterSpacing: '-0.02em' }}>
           Master Algorithms.<br />
           <span style={{ background: 'var(--brand-gradient)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>
             Dominate the Arena.
@@ -45,7 +45,7 @@ const Home = ({ currentUser }) => {
       </div>
 
       {/* Feature Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
+      <div className="home-feature-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(260px, 1fr))',
         gap: '1.5rem', marginTop: '6rem', textAlign: 'left' }}>
         {[
           { icon: <Code size={30} color="var(--brand-primary)" />,  title: 'Real Execution Engine',  desc: 'JavaScript code is actually executed against test cases. See per-test-case pass/fail with real output diff.' },
