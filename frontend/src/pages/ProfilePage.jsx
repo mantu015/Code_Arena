@@ -77,18 +77,18 @@ const ProfilePage = ({ currentUser }) => {
   };
 
   return (
-    <div className="main-container animate-fade-in" style={{ paddingTop: '3rem', paddingBottom: '4rem' }}>
+    <div className="main-container profile-page animate-fade-in" style={{ paddingTop: '3rem', paddingBottom: '4rem' }}>
 
       {/* Header */}
-      <div className="glass-panel" style={{ padding: '2rem', marginBottom: '2rem',
+      <div className="glass-panel profile-header" style={{ padding: '2rem', marginBottom: '2rem',
         display: 'flex', alignItems: 'center', gap: '2rem', flexWrap: 'wrap' }}>
         <div style={{ width: 80, height: 80, borderRadius: '50%', background: 'var(--brand-gradient)',
           display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '2rem', fontWeight: 700,
           flexShrink: 0 }}>
           {user.username.charAt(0).toUpperCase()}
         </div>
-        <div style={{ flex: 1 }}>
-          <h1 style={{ fontSize: '2rem', marginBottom: 4 }}>{user.username}</h1>
+        <div className="profile-identity" style={{ flex: 1 }}>
+          <h1 className="profile-username" style={{ fontSize: '2rem', marginBottom: 4 }}>{user.username}</h1>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
             <span style={{ padding: '4px 14px', borderRadius: 999, fontWeight: 700, fontSize: '0.85rem',
               background: `${badge.color}22`, color: badge.color, border: `1px solid ${badge.color}44` }}>
@@ -105,14 +105,14 @@ const ProfilePage = ({ currentUser }) => {
       </div>
 
       {/* Stat Cards */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+      <div className="profile-stats-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
         <StatCard icon={<CheckCircle />} label="Problems Solved"    value={stats.solvedCount}        color="var(--success)" />
         <StatCard icon={<Zap />}         label="Total Submissions"  value={stats.totalSubmissions}   color="var(--brand-primary)" />
         <StatCard icon={<Code2 />}       label="Acceptance Rate"    value={`${acceptRate}%`}         color="var(--warning)" />
         <StatCard icon={<Trophy />}      label="Global Rank"        value={`#${stats.rank}`}         color="#f59e0b" />
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '1.5rem', flexWrap: 'wrap' }}>
+      <div className="profile-details-grid" style={{ display: 'grid', gridTemplateColumns: 'minmax(0, 1fr) minmax(0, 1.5fr)', gap: '1.5rem' }}>
 
         {/* Difficulty Breakdown */}
         <div className="glass-panel" style={{ padding: '1.5rem' }}>
@@ -151,7 +151,7 @@ const ProfilePage = ({ currentUser }) => {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
               {stats.recentSubmissions?.map((s, i) => (
-                <div key={i} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
+                <div key={i} className="profile-submission-row" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                   padding: '0.6rem 0.75rem', borderRadius: 8, background: 'rgba(255,255,255,0.03)',
                   border: '1px solid var(--border-color)' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>

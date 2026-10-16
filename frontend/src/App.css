@@ -72,8 +72,34 @@
 }
 
 .app-nav-links,
-.app-nav-actions {
+.app-nav-actions,
+.app-profile-link {
   min-width: 0;
+}
+
+.app-profile-link {
+  flex: 0 0 40px;
+}
+
+.profile-page,
+.profile-header,
+.profile-identity,
+.profile-details-grid {
+  min-width: 0;
+}
+
+.profile-username {
+  overflow-wrap: anywhere;
+}
+
+.profile-submission-row {
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.profile-submission-row > div {
+  min-width: 0;
+  flex-wrap: wrap;
 }
 
 .home-feature-grid {
@@ -110,6 +136,22 @@
     margin-left: auto;
   }
 
+  .profile-header {
+    gap: 1.25rem !important;
+  }
+
+  .profile-identity {
+    flex-basis: calc(100% - 100px);
+  }
+
+  .profile-details-grid {
+    grid-template-columns: minmax(0, 1fr) !important;
+  }
+
+  .profile-submission-row {
+    flex-wrap: wrap;
+  }
+
   .workspace-layout {
     height: auto;
     min-height: 0;
@@ -139,6 +181,59 @@
   .main-container {
     padding-right: 1rem;
     padding-left: 1rem;
+  }
+
+  .profile-page {
+    padding-top: 1.5rem !important;
+    padding-bottom: 2rem !important;
+  }
+
+  .profile-header {
+    padding: 1.25rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .profile-username {
+    font-size: clamp(1.25rem, 6vw, 1.75rem) !important;
+  }
+
+  .profile-stats-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 0.75rem !important;
+    margin-bottom: 1rem !important;
+  }
+
+  .profile-stats-grid > .glass-panel {
+    min-width: 0;
+    padding: 1rem !important;
+    gap: 0.65rem !important;
+  }
+
+  .profile-stats-grid > .glass-panel > div:first-child {
+    flex: 0 0 36px;
+    width: 36px !important;
+    height: 36px !important;
+  }
+
+  .profile-stats-grid > .glass-panel > div:last-child > div:first-child {
+    font-size: 1.35rem !important;
+  }
+
+  .profile-details-grid {
+    gap: 1rem !important;
+  }
+
+  .profile-details-grid > .glass-panel {
+    min-width: 0;
+    padding: 1rem !important;
+  }
+
+  .profile-submission-row {
+    align-items: flex-start !important;
+  }
+
+  .profile-submission-row > div {
+    gap: 0.4rem !important;
   }
 
   .home-heading {

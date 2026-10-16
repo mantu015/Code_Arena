@@ -65,19 +65,19 @@ const Navbar = ({ currentUser, onAuthSuccess, onLogout }) => {
 
         {currentUser ? (
           <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-            <Link to="/profile"
-              style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '0.4rem 1rem',
-                borderRadius: 8, border: '1px solid var(--border-color)',
+            <Link to="/profile" className="app-profile-link"
+              aria-label="Open profile" title="Profile"
+              style={{ display: 'flex', alignItems: 'center', justifyContent: 'center',
+                width: 40, height: 40, borderRadius: '50%', border: '1px solid var(--border-color)',
                 background: 'rgba(255,255,255,0.04)', textDecoration: 'none',
                 transition: 'background 0.2s' }}
               onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.08)'}
               onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.04)'}>
-              <div style={{ width: 26, height: 26, borderRadius: '50%', background: 'var(--brand-gradient)',
+              <div style={{ width: 30, height: 30, borderRadius: '50%', background: 'var(--brand-gradient)',
                 display: 'flex', alignItems: 'center', justifyContent: 'center',
                 fontSize: '0.75rem', fontWeight: 700, color: 'white' }}>
                 {currentUser.username.charAt(0).toUpperCase()}
               </div>
-              <span style={{ fontWeight: 600, fontSize: '0.9rem' }}>{currentUser.username}</span>
             </Link>
             <button className="btn btn-secondary" style={{ padding: '0.5rem' }}
               onClick={() => setIsLogoutOpen(true)} title="Sign Out">
