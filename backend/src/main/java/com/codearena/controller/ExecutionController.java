@@ -4,6 +4,10 @@ import com.codearena.model.ExecutionResult;
 import com.codearena.model.Submission;
 import com.codearena.service.CodeExecutionService;
 import com.codearena.service.SubmissionService;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.Data;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,7 +29,7 @@ public class ExecutionController {
     private boolean executionEnabled;
 
     @PostMapping
-    public ResponseEntity<?> execute(@RequestBody ExecuteRequest request) {
+    public ResponseEntity<?> execute(@Valid @RequestBody ExecuteRequest request) {
         if (!executionEnabled) {
             return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .body(Map.of("message", "Code execution is disabled on this deployment."));
@@ -60,6 +64,12 @@ public class ExecutionController {
 class ExecuteRequest {
     private Long userId;
     private Long problemId;
+
+    @NotBlank
+    @Size(max = 30_000)
     private String code;
+
+    @NotBlank
+    @Pattern(regexp = "(?i)javascript|python|java|cpp|c\\+\\+")
     private String language;
 }

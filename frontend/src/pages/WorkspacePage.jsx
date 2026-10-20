@@ -126,6 +126,189 @@ public:
     }
 };`
   },
+  '7': {
+    javascript: `function isValid(s) {
+
+}`,
+    python: `def isValid(s):
+    `,
+    java: `class Solution {
+    public boolean isValid(String s) {
+        return false;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    bool isValid(string s) {
+        return false;
+    }
+};`
+  },
+  '8': {
+    javascript: `function mergeTwoLists(list1, list2) {
+
+}`,
+    python: `# ListNode is pre-defined: class ListNode: val, next
+def mergeTwoLists(list1, list2):
+    `,
+    java: `class Solution {
+    public ListNode mergeTwoLists(ListNode list1, ListNode list2) {
+        return null;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    ListNode* mergeTwoLists(ListNode* list1, ListNode* list2) {
+        return nullptr;
+    }
+};`
+  },
+  '9': {
+    javascript: `function maxSubArray(nums) {
+
+}`,
+    python: `def maxSubArray(nums):
+    `,
+    java: `class Solution {
+    public int maxSubArray(int[] nums) {
+        return 0;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    int maxSubArray(vector<int>& nums) {
+        return 0;
+    }
+};`
+  },
+  '10': {
+    javascript: `function climbStairs(n) {
+
+}`,
+    python: `def climbStairs(n):
+    `,
+    java: `class Solution {
+    public int climbStairs(int n) {
+        return 0;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    int climbStairs(int n) {
+        return 0;
+    }
+};`
+  },
+  '11': {
+    javascript: `function inorderTraversal(root) {
+
+}`,
+    python: `# TreeNode is pre-defined: class TreeNode: val, left, right
+def inorderTraversal(root):
+    `,
+    java: `class Solution {
+    public List<Integer> inorderTraversal(TreeNode root) {
+        return new ArrayList<>();
+    }
+}`,
+    cpp: `class Solution {
+public:
+    vector<int> inorderTraversal(TreeNode* root) {
+        return {};
+    }
+};`
+  },
+  '12': {
+    javascript: `function maxProfit(prices) {
+
+}`,
+    python: `def maxProfit(prices):
+    `,
+    java: `class Solution {
+    public int maxProfit(int[] prices) {
+        return 0;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    int maxProfit(vector<int>& prices) {
+        return 0;
+    }
+};`
+  },
+  '13': {
+    javascript: `function isPalindrome(s) {
+
+}`,
+    python: `def isPalindrome(s):
+    `,
+    java: `class Solution {
+    public boolean isPalindrome(String s) {
+        return false;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    bool isPalindrome(string s) {
+        return false;
+    }
+};`
+  },
+  '14': {
+    javascript: `function reverseList(head) {
+
+}`,
+    python: `# ListNode is pre-defined: class ListNode: val, next
+def reverseList(head):
+    `,
+    java: `class Solution {
+    public ListNode reverseList(ListNode head) {
+        return null;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    ListNode* reverseList(ListNode* head) {
+        return nullptr;
+    }
+};`
+  },
+  '15': {
+    javascript: `function containsDuplicate(nums) {
+
+}`,
+    python: `def containsDuplicate(nums):
+    `,
+    java: `class Solution {
+    public boolean containsDuplicate(int[] nums) {
+        return false;
+    }
+}`,
+    cpp: `class Solution {
+public:
+    bool containsDuplicate(vector<int>& nums) {
+        return false;
+    }
+};`
+  },
+  '16': {
+    javascript: `function productExceptSelf(nums) {
+
+}`,
+    python: `def productExceptSelf(nums):
+    `,
+    java: `class Solution {
+    public int[] productExceptSelf(int[] nums) {
+        return new int[nums.length];
+    }
+}`,
+    cpp: `class Solution {
+public:
+    vector<int> productExceptSelf(vector<int>& nums) {
+        return {};
+    }
+};`
+  },
 };
 
 const fallback = {

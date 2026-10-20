@@ -2,6 +2,7 @@ package com.codearena.service;
 
 import com.codearena.model.ExecutionResult;
 import com.codearena.model.ExecutionResult.TestCaseResult;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import javax.script.ScriptEngine;
@@ -10,10 +11,16 @@ import javax.script.ScriptException;
 import java.io.*;
 import java.nio.file.*;
 import java.util.*;
+import java.util.Locale;
 import java.util.concurrent.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
+@RequiredArgsConstructor
 public class CodeExecutionService {
+
+    private final Judge0RunnerService runnerService;
 
     private static final Map<Long, List<TC>> TESTS = new LinkedHashMap<>();
 
@@ -57,11 +64,11 @@ public class CodeExecutionService {
 
         // ── Problem 2: Add Two Numbers ───────────────────────────────────────
         String jsListHelper =
-            "function _ml(a){let h={val:a[0],next:null},c=h;for(let i=1;i<a.length;i++){c.next={val:a[i],next:null};c=c.next;}return h;}" +
+            "function _ml(a){if(!a.length)return null;let h={val:a[0],next:null},c=h;for(let i=1;i<a.length;i++){c.next={val:a[i],next:null};c=c.next;}return h;}" +
             "function _ta(n){let r=[];while(n){r.push(n.val);n=n.next;}return r;}";
         String pyListHelper =
             "\nclass ListNode:\n    def __init__(self,val=0,next=None):\n        self.val=val;self.next=next\n" +
-            "def _ml(a):\n    h=ListNode(a[0]);c=h\n    for v in a[1:]:c.next=ListNode(v);c=c.next\n    return h\n" +
+            "def _ml(a):\n    if not a:return None\n    h=ListNode(a[0]);c=h\n    for v in a[1:]:c.next=ListNode(v);c=c.next\n    return h\n" +
             "def _ta(n):\n    r=[]\n    while n:r.append(n.val);n=n.next\n    return r\n";
         TESTS.put(2L, List.of(
             new TC("l1=[2,4,3], l2=[5,6,4]", "[7,0,8]",
@@ -73,6 +80,17 @@ public class CodeExecutionService {
                 pyListHelper + pyCall("print(_ta(addTwoNumbers(_ml([0]),_ml([0]))))"),
                 javaWrap(2, "System.out.println(Arrays.toString(toArr(new Solution().addTwoNumbers(makeList(new int[]{0}),makeList(new int[]{0})))).replace(\", \",\",\"));"))
         ));
+
+        String jsTreeHelper =
+            "function _bt(a){if(!a.length||a[0]==null)return null;let r={val:a[0],left:null,right:null},q=[r],i=1;" +
+            "while(q.length&&i<a.length){let n=q.shift();if(i<a.length&&a[i]!=null){n.left={val:a[i],left:null,right:null};q.push(n.left);}i++;" +
+            "if(i<a.length&&a[i]!=null){n.right={val:a[i],left:null,right:null};q.push(n.right);}i++;}return r;}";
+        String pyTreeHelper =
+            "\nclass TreeNode:\n    def __init__(self,val=0,left=None,right=None):self.val=val;self.left=left;self.right=right\n" +
+            "def _bt(a):\n    if not a or a[0] is None:return None\n" +
+            "    root=TreeNode(a[0]);q=[root];i=1\n" +
+            "    while q and i<len(a):\n        n=q.pop(0)\n        if i<len(a) and a[i] is not None:n.left=TreeNode(a[i]);q.append(n.left)\n        i+=1\n" +
+            "        if i<len(a) and a[i] is not None:n.right=TreeNode(a[i]);q.append(n.right)\n        i+=1\n    return root\n";
 
         // ── Problem 3: Longest Substring ─────────────────────────────────────
         TESTS.put(3L, List.of(
@@ -129,14 +147,143 @@ public class CodeExecutionService {
                 pyCall("print(str(isMatch('ab','.*')).lower())"),
                 javaWrap(6, "System.out.println(new Solution().isMatch(\"ab\",\".*\"));"))
         ));
+
+        TESTS.put(7L, List.of(
+            new TC("s='()'", "true", "String(isValid('()'))",
+                pyCall("print(str(isValid('()')).lower())"),
+                javaWrap(7, "System.out.println(new Solution().isValid(\"()\"));")),
+            new TC("s='()[]{}'", "true", "String(isValid('()[]{}'))",
+                pyCall("print(str(isValid('()[]{}')).lower())"),
+                javaWrap(7, "System.out.println(new Solution().isValid(\"()[]{}\"));")),
+            new TC("s='(]'", "false", "String(isValid('(]'))",
+                pyCall("print(str(isValid('(]')).lower())"),
+                javaWrap(7, "System.out.println(new Solution().isValid(\"(]\"));"))
+        ));
+
+        TESTS.put(8L, List.of(
+            new TC("list1=[1,2,4], list2=[1,3,4]", "[1,1,2,3,4,4]",
+                jsListHelper + "JSON.stringify(_ta(mergeTwoLists(_ml([1,2,4]),_ml([1,3,4]))))",
+                pyListHelper + pyCall("print(_ta(mergeTwoLists(_ml([1,2,4]),_ml([1,3,4]))))"),
+                javaWrap(8, "System.out.println(Arrays.toString(toArr(new Solution().mergeTwoLists(makeList(new int[]{1,2,4}),makeList(new int[]{1,3,4})))).replace(\", \",\",\"));")),
+            new TC("list1=[], list2=[]", "[]",
+                jsListHelper + "JSON.stringify(_ta(mergeTwoLists(_ml([]),_ml([]))))",
+                pyListHelper + pyCall("print(_ta(mergeTwoLists(_ml([]),_ml([]))))"),
+                javaWrap(8, "System.out.println(Arrays.toString(toArr(new Solution().mergeTwoLists(makeList(new int[]{}),makeList(new int[]{})))).replace(\", \",\",\"));"))
+        ));
+
+        TESTS.put(9L, List.of(
+            new TC("nums=[-2,1,-3,4,-1,2,1,-5,4]", "6",
+                "String(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))",
+                pyCall("print(maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))"),
+                javaWrap(9, "System.out.println(new Solution().maxSubArray(new int[]{-2,1,-3,4,-1,2,1,-5,4}));")),
+            new TC("nums=[1]", "1",
+                "String(maxSubArray([1]))",
+                pyCall("print(maxSubArray([1]))"),
+                javaWrap(9, "System.out.println(new Solution().maxSubArray(new int[]{1}));")),
+            new TC("nums=[5,4,-1,7,8]", "23",
+                "String(maxSubArray([5,4,-1,7,8]))",
+                pyCall("print(maxSubArray([5,4,-1,7,8]))"),
+                javaWrap(9, "System.out.println(new Solution().maxSubArray(new int[]{5,4,-1,7,8}));"))
+        ));
+
+        TESTS.put(10L, List.of(
+            new TC("n=2", "2", "String(climbStairs(2))",
+                pyCall("print(climbStairs(2))"),
+                javaWrap(10, "System.out.println(new Solution().climbStairs(2));")),
+            new TC("n=3", "3", "String(climbStairs(3))",
+                pyCall("print(climbStairs(3))"),
+                javaWrap(10, "System.out.println(new Solution().climbStairs(3));")),
+            new TC("n=5", "8", "String(climbStairs(5))",
+                pyCall("print(climbStairs(5))"),
+                javaWrap(10, "System.out.println(new Solution().climbStairs(5));"))
+        ));
+
+        TESTS.put(11L, List.of(
+            new TC("root=[1,null,2,3]", "[1,3,2]",
+                jsTreeHelper + "JSON.stringify(inorderTraversal(_bt([1,null,2,3])))",
+                pyTreeHelper + pyCall("print(inorderTraversal(_bt([1,None,2,3])))"),
+                javaWrap(11, "System.out.println(new Solution().inorderTraversal(makeTree(new Integer[]{1,null,2,3})).toString().replace(\", \",\",\"));")),
+            new TC("root=[]", "[]",
+                jsTreeHelper + "JSON.stringify(inorderTraversal(_bt([])))",
+                pyTreeHelper + pyCall("print(inorderTraversal(_bt([])))"),
+                javaWrap(11, "System.out.println(new Solution().inorderTraversal(makeTree(new Integer[]{})).toString().replace(\", \",\",\"));")),
+            new TC("root=[1]", "[1]",
+                jsTreeHelper + "JSON.stringify(inorderTraversal(_bt([1])))",
+                pyTreeHelper + pyCall("print(inorderTraversal(_bt([1])))"),
+                javaWrap(11, "System.out.println(new Solution().inorderTraversal(makeTree(new Integer[]{1})).toString().replace(\", \",\",\"));"))
+        ));
+
+        TESTS.put(12L, List.of(
+            new TC("prices=[7,1,5,3,6,4]", "5",
+                "String(maxProfit([7,1,5,3,6,4]))",
+                pyCall("print(maxProfit([7,1,5,3,6,4]))"),
+                javaWrap(12, "System.out.println(new Solution().maxProfit(new int[]{7,1,5,3,6,4}));")),
+            new TC("prices=[7,6,4,3,1]", "0",
+                "String(maxProfit([7,6,4,3,1]))",
+                pyCall("print(maxProfit([7,6,4,3,1]))"),
+                javaWrap(12, "System.out.println(new Solution().maxProfit(new int[]{7,6,4,3,1}));"))
+        ));
+
+        TESTS.put(13L, List.of(
+            new TC("s='A man, a plan, a canal: Panama'", "true",
+                "String(isPalindrome('A man, a plan, a canal: Panama'))",
+                pyCall("print(str(isPalindrome('A man, a plan, a canal: Panama')).lower())"),
+                javaWrap(13, "System.out.println(new Solution().isPalindrome(\"A man, a plan, a canal: Panama\"));")),
+            new TC("s='race a car'", "false",
+                "String(isPalindrome('race a car'))",
+                pyCall("print(str(isPalindrome('race a car')).lower())"),
+                javaWrap(13, "System.out.println(new Solution().isPalindrome(\"race a car\"));"))
+        ));
+
+        TESTS.put(14L, List.of(
+            new TC("head=[1,2,3,4,5]", "[5,4,3,2,1]",
+                jsListHelper + "JSON.stringify(_ta(reverseList(_ml([1,2,3,4,5]))))",
+                pyListHelper + pyCall("print(_ta(reverseList(_ml([1,2,3,4,5]))))"),
+                javaWrap(14, "System.out.println(Arrays.toString(toArr(new Solution().reverseList(makeList(new int[]{1,2,3,4,5})))).replace(\", \",\",\"));")),
+            new TC("head=[1,2]", "[2,1]",
+                jsListHelper + "JSON.stringify(_ta(reverseList(_ml([1,2]))))",
+                pyListHelper + pyCall("print(_ta(reverseList(_ml([1,2]))))"),
+                javaWrap(14, "System.out.println(Arrays.toString(toArr(new Solution().reverseList(makeList(new int[]{1,2})))).replace(\", \",\",\"));")),
+            new TC("head=[]", "[]",
+                jsListHelper + "JSON.stringify(_ta(reverseList(_ml([]))))",
+                pyListHelper + pyCall("print(_ta(reverseList(_ml([]))))"),
+                javaWrap(14, "System.out.println(Arrays.toString(toArr(new Solution().reverseList(makeList(new int[]{})))).replace(\", \",\",\"));"))
+        ));
+
+        TESTS.put(15L, List.of(
+            new TC("nums=[1,2,3,1]", "true",
+                "String(containsDuplicate([1,2,3,1]))",
+                pyCall("print(str(containsDuplicate([1,2,3,1])).lower())"),
+                javaWrap(15, "System.out.println(new Solution().containsDuplicate(new int[]{1,2,3,1}));")),
+            new TC("nums=[1,2,3,4]", "false",
+                "String(containsDuplicate([1,2,3,4]))",
+                pyCall("print(str(containsDuplicate([1,2,3,4])).lower())"),
+                javaWrap(15, "System.out.println(new Solution().containsDuplicate(new int[]{1,2,3,4}));")),
+            new TC("nums=[1,1,1,3,3,4,3,2,4,2]", "true",
+                "String(containsDuplicate([1,1,1,3,3,4,3,2,4,2]))",
+                pyCall("print(str(containsDuplicate([1,1,1,3,3,4,3,2,4,2])).lower())"),
+                javaWrap(15, "System.out.println(new Solution().containsDuplicate(new int[]{1,1,1,3,3,4,3,2,4,2}));"))
+        ));
+
+        TESTS.put(16L, List.of(
+            new TC("nums=[1,2,3,4]", "[24,12,8,6]",
+                "JSON.stringify(productExceptSelf([1,2,3,4]))",
+                pyCall("print(productExceptSelf([1,2,3,4]))"),
+                javaWrap(16, "System.out.println(Arrays.toString(new Solution().productExceptSelf(new int[]{1,2,3,4})).replace(\", \",\",\"));")),
+            new TC("nums=[-1,1,0,-3,3]", "[0,0,9,0,0]",
+                "JSON.stringify(productExceptSelf([-1,1,0,-3,3]))",
+                pyCall("print(productExceptSelf([-1,1,0,-3,3]))"),
+                javaWrap(16, "System.out.println(Arrays.toString(new Solution().productExceptSelf(new int[]{-1,1,0,-3,3})).replace(\", \",\",\"));"))
+        ));
     }
 
     private static String javaWrap(int problemId, String callCode) {
         String listNodeHelper = "";
-        if (problemId == 2) {
+        if (problemId == 2 || problemId == 8 || problemId == 14) {
             listNodeHelper =
                 "    static class ListNode { int val; ListNode next; ListNode(int v){val=v;} }\n" +
                 "    static ListNode makeList(int[] a){\n" +
+                "        if(a.length==0)return null;\n" +
                 "        ListNode h=new ListNode(a[0]),c=h;\n" +
                 "        for(int i=1;i<a.length;i++){c.next=new ListNode(a[i]);c=c.next;}\n" +
                 "        return h;}\n" +
@@ -145,9 +292,18 @@ public class CodeExecutionService {
                 "        while(n!=null){r.add(n.val);n=n.next;}\n" +
                 "        return r.stream().mapToInt(Integer::intValue).toArray();}\n";
         }
+        String treeNodeHelper = "";
+        if (problemId == 11) {
+            treeNodeHelper =
+                "    static class TreeNode { int val; TreeNode left,right; TreeNode(int v){val=v;} }\n" +
+                "    static TreeNode makeTree(Integer[] a){\n" +
+                "        if(a.length==0||a[0]==null)return null; TreeNode root=new TreeNode(a[0]); Queue<TreeNode> q=new LinkedList<>(); q.add(root); int i=1;\n" +
+                "        while(!q.isEmpty()&&i<a.length){TreeNode n=q.remove(); if(i<a.length&&a[i]!=null){n.left=new TreeNode(a[i]);q.add(n.left);}i++; if(i<a.length&&a[i]!=null){n.right=new TreeNode(a[i]);q.add(n.right);}i++;} return root;}\n";
+        }
         return "import java.util.*;\n" +
                "public class Main {\n" +
                listNodeHelper +
+               treeNodeHelper +
                "    {{USER_CODE}}\n" +
                "    public static void main(String[] args) throws Exception {\n" +
                "        " + callCode + "\n" +
@@ -164,13 +320,152 @@ public class CodeExecutionService {
             r.setTestResults(List.of());
             return r;
         }
-        return switch (language.toLowerCase()) {
-            case "javascript" -> executeJS(tests, code);
-            case "python"     -> executePython(tests, code);
-            case "java"       -> executeJava(tests, code);
-            case "cpp"        -> notSupported(tests, "C++");
-            default           -> notSupported(tests, language);
+        if (language == null || !Set.of("javascript", "python", "java", "cpp", "c++").contains(language.toLowerCase(Locale.ROOT))) {
+            return notSupported(tests, language == null ? "unknown" : language);
+        }
+
+        try {
+            List<TestCaseResult> testResults = new ArrayList<>();
+            long totalRuntime = 0;
+            boolean allPassed = true;
+            String solutionBody = language.equalsIgnoreCase("java") ? extractSolutionBody(code) : null;
+
+            for (int i = 0; i < tests.size(); i++) {
+                TC test = tests.get(i);
+                String source = switch (language.toLowerCase(Locale.ROOT)) {
+                    case "javascript" -> code + "\nconsole.log(String(eval("
+                            + runnerService.encodeJavaScriptString(test.jsHarness()) + ")));\n";
+                    case "python" -> code + "\n" + test.pyDriver();
+                    case "java" -> test.javaDriver().replace("{{USER_CODE}}", solutionBody);
+                    case "cpp", "c++" -> cppSource(problemId, test.input(), code);
+                    default -> throw new IllegalStateException("Unsupported language reached the execution dispatcher.");
+                };
+                Judge0RunnerService.RunnerResult run = runnerService.execute(language, source, "");
+                totalRuntime += run.runtimeMs();
+                String actual = actualOutput(run);
+                boolean passed = run.statusId() == 3
+                        && !actual.startsWith("Runtime Error:")
+                        && normalize(actual).equals(normalize(test.expected()));
+                testResults.add(new TestCaseResult(
+                        i + 1, test.input(), test.expected(), actual, passed, run.runtimeMs()));
+                if (!passed) {
+                    allPassed = false;
+                    break;
+                }
+            }
+
+            ExecutionResult result = new ExecutionResult();
+            result.setTestResults(testResults);
+            result.setRuntimeMs(totalRuntime);
+            result.setStatus(deriveStatus(allPassed, testResults));
+            return result;
+        } catch (IllegalArgumentException exception) {
+            return executionError("Invalid execution request", exception.getMessage());
+        } catch (Judge0RunnerService.CodeRunnerException exception) {
+            return executionError("Runner Error", exception.getMessage());
+        }
+    }
+
+    private String actualOutput(Judge0RunnerService.RunnerResult run) {
+        if (run.statusId() == 6) {
+            return "Compile Error: " + firstLines(run.compileOutput(), 3);
+        }
+        if (run.statusId() == 5) {
+            return "Time Limit Exceeded";
+        }
+        if (run.statusId() != 3) {
+            String details = firstLines(
+                    run.stderr() == null || run.stderr().isBlank() ? run.stdout() : run.stderr(), 3);
+            return "Runtime Error: " + (details.isBlank() ? run.status() : details);
+        }
+        return run.stdout() == null ? "" : run.stdout().trim();
+    }
+
+    private ExecutionResult executionError(String status, String message) {
+        ExecutionResult result = new ExecutionResult();
+        result.setStatus(status);
+        result.setErrorMessage(message);
+        result.setTestResults(List.of());
+        return result;
+    }
+
+    private String cppSource(Long problemId, String input, String code) {
+        String call = switch (problemId.intValue()) {
+            case 1 -> "vector<int> nums=" + intArray(input, "nums") + "; int target=" + intValue(input, "target")
+                    + "; auto r=Solution().twoSum(nums,target); sort(r.begin(),r.end()); printVector(r);";
+            case 2 -> "auto r=Solution().addTwoNumbers(makeList(" + intArray(input, "l1")
+                    + "),makeList(" + intArray(input, "l2") + ")); printVector(listToVector(r));";
+            case 3 -> "cout << Solution().lengthOfLongestSubstring(" + cppString(input, "s") + ");";
+            case 4 -> "vector<int> a=" + intArray(input, "nums1") + ", b=" + intArray(input, "nums2")
+                    + "; cout << fixed << setprecision(1) << Solution().findMedianSortedArrays(a,b);";
+            case 5 -> "vector<int> nums=" + intArray(input, "nums") + "; auto r=Solution().threeSum(nums)"
+                    + "; for(auto& v:r) sort(v.begin(),v.end()); sort(r.begin(),r.end()); printNested(r);";
+            case 6 -> "cout << boolalpha << Solution().isMatch(" + cppString(input, "s") + ","
+                    + cppString(input, "p") + ");";
+            case 7 -> "cout << boolalpha << Solution().isValid(" + cppString(input, "s") + ");";
+            case 8 -> "auto r=Solution().mergeTwoLists(makeList(" + intArray(input, "list1")
+                    + "),makeList(" + intArray(input, "list2") + ")); printVector(listToVector(r));";
+            case 9 -> "vector<int> nums=" + intArray(input, "nums") + "; cout << Solution().maxSubArray(nums);";
+            case 10 -> "cout << Solution().climbStairs(" + intValue(input, "n") + ");";
+            case 11 -> "printVector(Solution().inorderTraversal(makeTree(" + treeArray(input) + ")));";
+            case 12 -> "vector<int> prices=" + intArray(input, "prices") + "; cout << Solution().maxProfit(prices);";
+            case 13 -> "cout << boolalpha << Solution().isPalindrome(" + cppString(input, "s") + ");";
+            case 14 -> "auto r=Solution().reverseList(makeList(" + intArray(input, "head")
+                    + ")); printVector(listToVector(r));";
+            case 15 -> "vector<int> nums=" + intArray(input, "nums") + "; cout << boolalpha << Solution().containsDuplicate(nums);";
+            case 16 -> "vector<int> nums=" + intArray(input, "nums") + "; printVector(Solution().productExceptSelf(nums));";
+            default -> throw new IllegalArgumentException("No C++ test harness exists for this problem.");
         };
+
+        return "#include <bits/stdc++.h>\nusing namespace std;\n"
+                + "struct ListNode{int val;ListNode* next;ListNode(int x=0,ListNode* n=nullptr):val(x),next(n){}};\n"
+                + "struct TreeNode{int val;TreeNode* left;TreeNode* right;TreeNode(int x=0,TreeNode* l=nullptr,TreeNode* r=nullptr):val(x),left(l),right(r){}};\n"
+                + "ListNode* makeList(vector<int> a){if(a.empty())return nullptr;ListNode* h=new ListNode(a[0]);auto c=h;for(size_t i=1;i<a.size();i++){c->next=new ListNode(a[i]);c=c->next;}return h;}\n"
+                + "vector<int> listToVector(ListNode* n){vector<int> r;while(n){r.push_back(n->val);n=n->next;}return r;}\n"
+                + "TreeNode* makeTree(vector<string> a){if(a.empty()||a[0]==\"null\")return nullptr;TreeNode* r=new TreeNode(stoi(a[0]));vector<TreeNode*> q{r};size_t i=1,j=0;while(j<q.size()&&i<a.size()){auto n=q[j++];if(i<a.size()&&a[i]!=\"null\"){n->left=new TreeNode(stoi(a[i]));q.push_back(n->left);}i++;if(i<a.size()&&a[i]!=\"null\"){n->right=new TreeNode(stoi(a[i]));q.push_back(n->right);}i++;}return r;}\n"
+                + "void printVector(const vector<int>& v){cout<<\"[\";for(size_t i=0;i<v.size();i++){if(i)cout<<\",\";cout<<v[i];}cout<<\"]\\n\";}\n"
+                + "void printVectorInline(const vector<int>& v){cout<<\"[\";for(size_t i=0;i<v.size();i++){if(i)cout<<\",\";cout<<v[i];}cout<<\"]\";}\n"
+                + "void printNested(const vector<vector<int>>& v){cout<<\"[\";for(size_t i=0;i<v.size();i++){if(i)cout<<\",\";printVectorInline(v[i]);}cout<<\"]\\n\";}\n"
+                + code + "\nint main(){ " + call + " return 0; }\n";
+    }
+
+    private String intArray(String input, String key) {
+        String values = capture(input, "\\b" + Pattern.quote(key) + "\\s*=\\s*\\[([^\\]]*)\\]");
+        if (values.isBlank()) {
+            return "vector<int>{}";
+        }
+        return "vector<int>{" + values.replaceAll("\\s+", "") + "}";
+    }
+
+    private String treeArray(String input) {
+        String values = capture(input, "\\broot\\s*=\\s*\\[([^\\]]*)\\]");
+        if (values.isBlank()) {
+            return "vector<string>{}";
+        }
+        String[] nodes = values.split(",");
+        List<String> quoted = new ArrayList<>();
+        for (String node : nodes) {
+            String value = node.trim();
+            quoted.add("\"" + value + "\"");
+        }
+        return "vector<string>{" + String.join(",", quoted) + "}";
+    }
+
+    private String intValue(String input, String key) {
+        return capture(input, "\\b" + Pattern.quote(key) + "\\s*=\\s*(-?\\d+)");
+    }
+
+    private String cppString(String input, String key) {
+        String value = capture(input, "\\b" + Pattern.quote(key) + "\\s*=\\s*(['\"])(.*?)\\1");
+        return "\"" + value.replace("\\", "\\\\").replace("\"", "\\\"") + "\"";
+    }
+
+    private String capture(String input, String expression) {
+        Matcher matcher = Pattern.compile(expression).matcher(input);
+        if (!matcher.find()) {
+            throw new IllegalArgumentException("Could not prepare the test input for the C++ runner.");
+        }
+        return matcher.group(matcher.groupCount());
     }
 
     // ── JavaScript via Nashorn ───────────────────────────────────────────────

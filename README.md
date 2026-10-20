@@ -1,6 +1,6 @@
 # Code Arena 🏆
 
-A full-stack competitive programming platform built to simulate environments like LeetCode. Features a premium glassmorphism React UI with a Monaco Code Editor, real code execution for JavaScript, Python, and Java, a points-based leaderboard, daily challenges, user profiles, and a complete admin panel.
+A full-stack competitive programming platform built to simulate environments like LeetCode. Features a premium glassmorphism React UI with a Monaco Code Editor, sandboxed code execution, a points-based leaderboard, daily challenges, user profiles, and a complete admin panel.
 
 ---
 
@@ -32,7 +32,7 @@ A full-stack competitive programming platform built to simulate environments lik
 | Backend | Spring Boot 3.2, Java 17 |
 | ORM | Spring Data JPA + Hibernate |
 | Database | H2 (file-based persistent) |
-| Code Execution | Nashorn ScriptEngine (JS), `ProcessBuilder` (Python, Java) |
+| Code Execution | Isolated Judge0 runner |
 | Build Tools | Maven 3.9, Vite 8 |
 
 ---
@@ -41,11 +41,11 @@ A full-stack competitive programming platform built to simulate environments lik
 
 ### For Users
 - **Sign Up / Sign In** — session persisted in `localStorage`, auto-validated against DB on page load
-- **Problem Set** — 6 seeded algorithmic problems (Easy / Medium / Hard) with live search and difficulty filter tabs
+- **Problem Set** — 16 seeded algorithmic problems (Easy / Medium / Hard) with live search and difficulty filter tabs
 - **Real Code Execution** — write code in the browser and run it against actual test cases:
-  - **JavaScript** — executed via Nashorn ScriptEngine (in-process, instant)
-  - **Python** — executed via `python` subprocess with per-test-case isolation
-  - **Java** — compiled with `javac` and executed via `java` subprocess
+  - Problem submissions support **JavaScript, Python, Java, and C++**
+  - The Playground supports **JavaScript, Python, Java, C, and C++**
+  - All submitted code runs in the isolated Judge0 sandbox, not as a process on the app server
   - Per-test-case result rows showing input → expected → actual output with runtime in ms
 - **Submission History** — slide-in drawer on the workspace showing all past attempts per problem
 - **Daily Challenge** — auto-assigned problem per day with a live countdown timer and +50 bonus points
@@ -67,8 +67,7 @@ A full-stack competitive programming platform built to simulate environments lik
 - [Node.js](https://nodejs.org/) v16 or higher
 - [JDK 17](https://adoptium.net/) or higher
 - [Maven](https://maven.apache.org/) 3.6 or higher (or use your IDE)
-- [Python 3](https://www.python.org/) — required for Python code execution
-- `javac` / `java` in your system PATH — required for Java code execution
+- Network access to the configured Judge0 endpoint for code execution
 
 ---
 
@@ -142,7 +141,8 @@ The included `frontend/vercel.json` routes direct page visits and refreshes to t
    | --- | --- |
    | `DATABASE_URL` | `jdbc:h2:file:/var/data/codearena` |
    | `H2_CONSOLE_ENABLED` | `false` |
-   | `CODE_EXECUTION_ENABLED` | `false` |
+   | `CODE_EXECUTION_ENABLED` | `true` to enable sandboxed code execution |
+   | `CODE_RUNNER_URL` | Optional Judge0 endpoint; defaults to `https://ce.judge0.com` |
    | `CORS_ALLOWED_ORIGINS` | The exact Vercel production origin from step 2 |
 
 5. Set the health-check path to `/api/problems`, then deploy. Save the backend URL, for example `https://your-code-arena-api.onrender.com`.
@@ -159,7 +159,7 @@ Sign up accepts a syntactically valid email address without sending an email or 
 
 ### Code execution safety
 
-Code submissions are currently launched as operating-system processes and are **not sandboxed**. For public deployments, leave `CODE_EXECUTION_ENABLED=false`; the submission and playground run endpoints will return HTTP 503 while the rest of the site remains available. Do not enable execution on a public service until it has been moved to a properly isolated sandbox.
+Problem submissions and playground code run through the isolated Judge0 code runner, not as processes on the Render web service. To enable these routes, set `CODE_EXECUTION_ENABLED=true`; the runner enforces CPU, wall-clock, memory, file-size, and process limits and has network access disabled. Source code and input are sent to the configured runner endpoint (`CODE_RUNNER_URL`, defaulting to the public Judge0 CE endpoint). Use only code that is okay to send to that provider; its public endpoint may be rate-limited or unavailable. The app limits source code to 30,000 characters and stdin to 10,000 characters.
 
 ---
 
@@ -191,7 +191,7 @@ Code-arena/
 │   │   │   └── UserService.java
 │   │   ├── CodeArenaApplication.java
 │   │   ├── CorsConfig.java
-│   │   └── DataInitializer.java  # Seeds 6 problems on first run
+│   │   └── DataInitializer.java  # Seeds 16 problems on first run
 │   └── src/main/resources/
 │       ├── application.properties
 │       ├── schema.sql            # Table definitions (IF NOT EXISTS)
@@ -334,23 +334,27 @@ Log in with the admin credentials above. You will be redirected to **`/admin/das
 | 4 | Median of Two Sorted Arrays | Hard |
 | 5 | 3Sum | Medium |
 | 6 | Regular Expression Matching | Hard |
+| 7 | Valid Parentheses | Easy |
+| 8 | Merge Two Sorted Lists | Easy |
+| 9 | Maximum Subarray | Medium |
+| 10 | Climbing Stairs | Easy |
+| 11 | Binary Tree Inorder Traversal | Easy |
+| 12 | Best Time to Buy and Sell Stock | Easy |
+| 13 | Valid Palindrome | Easy |
+| 14 | Reverse Linked List | Easy |
+| 15 | Contains Duplicate | Easy |
+| 16 | Product of Array Except Self | Medium |
 
 ### Execution Engine
 
-Code is executed server-side via `POST /api/execute`. Each language has a different execution path:
+Problem code is executed through `POST /api/execute`; Playground code uses `POST /api/playground/run`. Both endpoints send source to the configured isolated Judge0 runner:
 
-| Language | Execution Method | Notes |
+| Surface | Supported languages |
 |---|---|---|
-| **JavaScript** | Nashorn `ScriptEngine` (JVM in-process) | Fastest, no subprocess overhead |
-| **Python** | `ProcessBuilder` → `python sol.py` | Requires Python 3 in PATH |
-| **Java** | `ProcessBuilder` → `javac` + `java Main` | Requires `javac`/`java` in PATH |
-| **C++** | Not supported | Shows "Not Supported" message |
+| Problem submissions | JavaScript, Python, Java, C++ |
+| Playground | JavaScript, Python, Java, C, C++ |
 
-**How Java execution works:** The user writes a `class Solution { ... }` — the engine extracts the body, wraps it as a `static class Solution` inside a generated `Main.java` with `import java.util.*`, compiles it, and runs it.
-
-**How Python execution works:** The user can write either a plain function (`def twoSum(...)`) or a class-based solution (`class Solution: def twoSum(self, ...)`). The engine auto-detects class-based solutions and binds the methods as top-level functions before running the test driver.
-
-**Timeout:** 10 seconds per test case. Infinite loops are killed automatically.
+**Safety and provider:** Code execution is disabled by default; set `CODE_EXECUTION_ENABLED=true` to enable it. Runner limits include a 3-second CPU limit, 8-second wall-clock limit, 128 MB memory, restricted process/file usage, and disabled network access. Source and input are sent to `CODE_RUNNER_URL` (default `https://ce.judge0.com`), so only use code that is okay to share with that provider. The public endpoint may be rate-limited or unavailable.
 
 ---
 
